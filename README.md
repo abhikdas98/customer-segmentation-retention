@@ -10,6 +10,18 @@ A production-grade Machine Learning system that performs:
 
 Built with industry-level architecture and MLOps best practices.
 
+## 💡 Why This Project Stands Out
+
+Unlike typical ML notebooks, this project demonstrates:
+
+- Production-grade API deployment
+- Docker containerization
+- MongoDB integration
+- Proper separation of ingestion and inference
+- Model version pinning
+- Health check endpoints
+- Clean Git hygiene
+
 ---
 
 ## 🚀 Project Overview
