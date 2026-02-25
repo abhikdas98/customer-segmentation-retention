@@ -1,4 +1,4 @@
-# 🧠 Customer Churn Prediction API (Production-Ready ML System)
+# 🧠 Customer Churn Prediction System — End-to-End Production ML Pipeline
 
 A production-grade Machine Learning system that performs:
 
