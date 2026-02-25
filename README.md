@@ -36,6 +36,12 @@ FastAPI (Docker Container)
 Churn Prediction Model
 ```
 
+## 📸 API Preview
+
+Swagger Documentation:
+
+![Swagger Screenshot](docs/swagger.png)
+
 ### Services
 
 - **FastAPI** – REST API for predictions
