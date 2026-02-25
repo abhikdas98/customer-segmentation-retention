@@ -1,0 +1,33 @@
+services:
+
+  mongo:
+    image: mongo:7
+    container_name: churn-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+    networks:
+      - churn-network
+
+  api:
+    build: .
+    container_name: churn-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./models:/app/models
+    depends_on:
+      - mongo
+    restart: always
+    networks:
+      - churn-network
+
+volumes:
+  mongo_data:
+
+networks:
+  churn-network:
