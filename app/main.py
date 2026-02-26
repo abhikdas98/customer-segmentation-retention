@@ -4,6 +4,8 @@ from src.churn_model import predict_churn
 from src.feature_engineering import get_customer_transactions, compute_features
 from src.insert_data import seed_data
 from src.logger import logger
+from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 
 app = FastAPI(
     title="Customer Churn Prediction API",
@@ -53,21 +55,21 @@ def churn_by_customer_id(customer: CustomerIDInput):
         "prediction": result
     }
 
+
 @app.get("/health")
 def health_check():
-
-    status = {
-        "api": "running",
-        "mongo": "unknown",
-        "model": "loaded"
-    }
+    mongo_status = "not connected"
 
     try:
-        client = MongoClient(MONGO_URI)
-        client.server_info()
-        status["mongo"] = "connected"
-    except:
-        status["mongo"] = "not connected"
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
+        client.admin.command("ping")   # Proper Mongo health check
+        mongo_status = "connected"
+    except PyMongoError:
+        mongo_status = "not connected"
 
-    return status
+    return {
+        "api": "running",
+        "mongo": mongo_status,
+        "model": "loaded"
+    }
     logger.error("Mongo connection failed.")
