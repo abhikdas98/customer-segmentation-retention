@@ -6,6 +6,7 @@ from src.insert_data import seed_data
 from src.logger import logger
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
+from src.config import MONGO_URI
 
 app = FastAPI(
     title="Customer Churn Prediction API",
