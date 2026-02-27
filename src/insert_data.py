@@ -15,11 +15,10 @@ def seed_data():
 
     print("Seeding MongoDB in safe batches...")
 
-    chunk_size = 2000  # micro-safe size
-
+    chunk_size = 2000
     total_inserted = 0
 
-    for chunk in pd.read_csv("data/raw/online_retail.csv", chunksize=chunk_size):
+    for chunk in pd.read_csv("/app/data/raw/online_retail.csv", chunksize=chunk_size):
 
         chunk.replace([float("inf"), float("-inf")], pd.NA, inplace=True)
         chunk.dropna(subset=["CustomerID"], inplace=True)
