@@ -1,51 +1,39 @@
 from pymongo import MongoClient
 import pandas as pd
-import os
 from src.config import MONGO_URI, DB_NAME, COLLECTION_NAME
 from src.logger import logger
 
 
 def seed_data():
-    try:
-        logger.info("Connecting to MongoDB...")
-        client = MongoClient(MONGO_URI)
-        db = client[DB_NAME]
-        collection = db[COLLECTION_NAME]
+    client = MongoClient(MONGO_URI)
+    db = client[DB_NAME]
+    collection = db[COLLECTION_NAME]
 
-        # Check if already populated
-        if collection.count_documents({}) > 0:
-            logger.info("MongoDB already contains data. Skipping seeding.")
-            return
+    if collection.count_documents({}) > 0:
+        print("MongoDB already contains data. Skipping seeding.")
+        return
 
-        logger.info("Seeding MongoDB...")
+    print("Seeding MongoDB in safe batches...")
 
-        file_path = os.path.join("data", "raw", "online_retail.csv")
+    chunk_size = 2000  # micro-safe size
 
-        if not os.path.exists(file_path):
-            logger.error(f"CSV file not found at path: {file_path}")
-            return
+    total_inserted = 0
 
-        df = pd.read_csv(file_path)
+    for chunk in pd.read_csv("data/raw/online_retail.csv", chunksize=chunk_size):
 
-        # Clean data
-        df.replace([float("inf"), float("-inf")], pd.NA, inplace=True)
-        df.dropna(subset=["CustomerID"], inplace=True)
+        chunk.replace([float("inf"), float("-inf")], pd.NA, inplace=True)
+        chunk.dropna(subset=["CustomerID"], inplace=True)
 
-        df["CustomerID"] = pd.to_numeric(df["CustomerID"], errors="coerce")
-        df.dropna(subset=["CustomerID"], inplace=True)
-        df["CustomerID"] = df["CustomerID"].astype(int)
+        chunk["CustomerID"] = pd.to_numeric(chunk["CustomerID"], errors="coerce")
+        chunk.dropna(subset=["CustomerID"], inplace=True)
+        chunk["CustomerID"] = chunk["CustomerID"].astype(int)
 
-        records = df.to_dict(orient="records")
+        records = chunk.to_dict(orient="records")
 
         if records:
-            collection.insert_many(records)
-            logger.info(f"Successfully inserted {len(records)} records into MongoDB.")
-        else:
-            logger.warning("No records found to insert.")
+            collection.insert_many(records, ordered=False)
+            total_inserted += len(records)
+            print(f"Inserted {total_inserted} records...")
 
-    except Exception as e:
-        logger.error(f"Error during MongoDB seeding: {e}")
-
-
-if __name__ == "__main__":
-    seed_data()
+    logger.info("MongoDB seeding complete.")
+    print("Seeding finished successfully.")
