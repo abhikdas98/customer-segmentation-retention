@@ -6,7 +6,8 @@ from src.insert_data import seed_data
 from src.logger import logger
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
-from src.config import MONGO_URI
+from src.config import DB_NAME, MONGO_URI, COLLECTION_NAME
+from src.churn_model import model
 
 app = FastAPI(
     title="Customer Churn Prediction API",
@@ -59,18 +60,33 @@ def churn_by_customer_id(customer: CustomerIDInput):
 
 @app.get("/health")
 def health_check():
-    mongo_status = "not connected"
+    status = {
+        "api": "running",
+        "mongo": "not connected",
+        "model": "not loaded",
+        "documents": 0
+    }
 
+    # Mongo Health Check
     try:
         client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
-        client.admin.command("ping")   # Proper Mongo health check
-        mongo_status = "connected"
-    except PyMongoError:
-        mongo_status = "not connected"
+        client.admin.command("ping")
 
-    return {
-        "api": "running",
-        "mongo": mongo_status,
-        "model": "loaded"
-    }
-    logger.error("Mongo connection failed.")
+        db = client[DB_NAME]
+        collection = db[COLLECTION_NAME]
+
+        doc_count = collection.count_documents({})
+        status["mongo"] = "connected"
+        status["documents"] = doc_count
+
+    except PyMongoError as e:
+        logger.error(f"Mongo connection failed: {e}")
+
+    # Model Check
+    try:
+        if model is not None:
+            status["model"] = "loaded"
+    except Exception as e:
+        logger.error(f"Model check failed: {e}")
+
+    return status
