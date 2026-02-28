@@ -1,79 +1,81 @@
-# 🧠 Customer Churn Prediction System — End-to-End Production ML Pipeline
+🧠 Customer Churn Prediction System — Production-Ready ML Pipeline
 
-A production-grade Machine Learning system that performs:
+An end-to-end Machine Learning system that performs:
 
-- 📊 Customer Segmentation (RFM + KMeans)
-- 🔍 Churn Prediction (Logistic Regression)
-- 🗄 MongoDB Data Storage
-- ⚡ FastAPI Inference API
-- 🐳 Fully Dockerized Deployment
+📊 Customer Segmentation (RFM + KMeans)
 
-Built with industry-level architecture and MLOps best practices.
+🔍 Churn Prediction (Logistic Regression)
 
-## 💡 Why This Project Stands Out
+🗄 MongoDB Data Storage
 
-Unlike typical ML notebooks, this project demonstrates:
+⚡ FastAPI Inference API
 
-- Production-grade API deployment
-- Docker containerization
-- MongoDB integration
-- Proper separation of ingestion and inference
-- Model version pinning
-- Health check endpoints
-- Clean Git hygiene
+🐳 Dockerized Deployment
 
----
+🌩 AWS EC2 Cloud Hosting
 
-## 🚀 Project Overview
+🔁 CI/CD via GitHub Actions
 
-This project analyzes retail transaction data to:
+Built with production-grade architecture and MLOps best practices.
 
-1. Segment customers using RFM analysis
-2. Predict churn probability using a trained ML model
-3. Serve real-time predictions through a FastAPI REST API
-4. Store and retrieve customer data from MongoDB
-5. Run entirely inside Docker containers
+🌍 Live Deployment
+🚀 Swagger UI
+http://13.61.65.27:8000/docs
+🩺 Health Check
+http://13.61.65.27:8000/health
 
----
+CI/CD automatically deploys updates on every push to main.
 
-## 🏗 Architecture
+💡 Why This Project Stands Out
 
-```
-Raw CSV (One-time ingestion)
-        ↓
-MongoDB (Docker Container)
-        ↓
-FastAPI (Docker Container)
-        ↓
-Churn Prediction Model
-```
+Unlike typical ML notebook projects, this system demonstrates:
 
-## 📸 API Preview
+Production-grade API deployment
 
-Swagger Documentation:
+Docker multi-container architecture
 
-![Swagger Screenshot](docs/swagger.png)
+MongoDB integration
 
-### Services
+Batch-safe large data ingestion (400K+ records)
 
-- **FastAPI** – REST API for predictions
-- **MongoDB** – Customer data storage
-- **Docker Compose** – Multi-container orchestration
-- **Scikit-learn** – ML modeling
-- **Pandas** – Data processing
+Memory tuning for micro cloud instance
 
----
+CI/CD automation
 
-## 📂 Project Structure
+Model version pinning
 
-```
+Health monitoring endpoint
+
+Real-world debugging in cloud environment
+
+This is a deployment-focused ML system, not just a modeling exercise.
+
+🏗 System Architecture
+              GitHub Push
+                   ↓
+          GitHub Actions (CI/CD)
+                   ↓
+               AWS EC2
+                   ↓
+        ┌─────────────────────┐
+        │ Docker Compose       │
+        │                      │
+        │  FastAPI Container   │
+        │        ↓             │
+        │  Churn Model         │
+        │        ↓             │
+        │  MongoDB Container   │
+        └─────────────────────┘
+📂 Project Structure
 customer-segmentation-retention/
 │
 ├── app/
-│   └── main.py              # FastAPI app
+│   └── main.py                  # FastAPI application
 │
 ├── src/
-│   ├── insert_data.py       # One-time MongoDB seeding
+│   ├── insert_data.py           # Safe MongoDB batch seeding
+│   ├── churn_model.py           # Prediction logic
+│   ├── feature_engineering.py   # RFM + behavioral features
 │   ├── config.py
 │   └── logger.py
 │
@@ -84,134 +86,138 @@ customer-segmentation-retention/
 ├── data/
 │   └── raw/online_retail.csv
 │
+├── .github/workflows/
+│   └── deploy.yml               # CI/CD automation
+│
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
 └── README.md
-```
+📊 Machine Learning Pipeline
+1️⃣ Customer Segmentation
 
----
+RFM feature engineering
 
-## 📊 Machine Learning Pipeline
+Log transformation
 
-### 1️⃣ Customer Segmentation
-- RFM feature engineering
-- Log transformation
-- KMeans clustering
-- Silhouette score validation
+KMeans clustering
 
-### 2️⃣ Churn Modeling
-- Logistic Regression
-- Threshold tuning
-- ROC-AUC evaluation
-- Feature importance analysis
-- Leakage detection & correction
+Silhouette score validation
 
-Final model trained using:
-- Frequency
-- Monetary
-- AvgOrderValue
+2️⃣ Churn Modeling
 
----
+Logistic Regression
 
-## 🧪 Model Performance
+Threshold tuning for churn recall optimization
 
-| Metric | Score |
-|--------|-------|
-| Accuracy | ~74% |
-| ROC-AUC | ~0.77 |
-| Churn Recall (after tuning) | 0.82 |
+ROC-AUC evaluation
 
----
+Feature importance interpretation
 
-## 🐳 Running with Docker
+Data leakage detection & correction
 
-### 1️⃣ Build & Start Containers
+Final production model uses:
 
-```bash
-docker compose build --no-cache
-docker compose up
-```
+Frequency
 
-### 2️⃣ Seed MongoDB (One-time)
+Monetary
 
-```bash
-docker exec -it churn-api python -m src.insert_data
-```
+AvgOrderValue
 
-### 3️⃣ Access API
-
-Swagger UI:
-```
-http://localhost:8000/docs
-```
-
-Health Check:
-```
-http://localhost:8000/health
-```
-
----
-
-## 📡 Example API Request
-
-```json
-POST /predict
+📈 Model Performance
+Metric	Score
+Accuracy	~74%
+ROC-AUC	~0.77
+Churn Recall (after tuning)	0.82
+📡 Example API Usage
+Request
+POST /predict_churn_by_id
 {
   "customer_id": 12347
 }
-```
-
-Response:
-
-```json
+Response
 {
   "customer_id": 12347,
-  "churn_probability": 0.07,
-  "churn_prediction": 0
+  "features": {
+    "Frequency": 7,
+    "Monetary": 4310.0,
+    "AvgOrderValue": 615.71
+  },
+  "prediction": {
+    "churn_probability": 0.07,
+    "churn_prediction": 0
+  }
 }
-```
+🐳 Running Locally with Docker
+Build & Start Containers
+docker compose build --no-cache
+docker compose up
+Seed MongoDB (One-time)
+docker exec -it churn-api python -m src.insert_data
+Access API
 
----
+Swagger:
 
-## 🧠 MLOps & Engineering Practices Applied
+http://localhost:8000/docs
+🔁 CI/CD Automation
 
-- Environment version pinning
-- Docker multi-container architecture
-- Logging system
-- Health check endpoint
-- Separation of ingestion & inference
-- Prevention of data leakage
-- Proper Python module execution
-- Clean Git hygiene
+Push to main
 
----
+GitHub Actions SSH into EC2
 
-## 🔐 Reproducibility
+Pull latest code
 
-All dependencies are pinned in:
+Rebuild Docker containers
 
-```
-requirements.txt
-```
+Restart API
 
-Docker ensures consistent execution across environments.
+Fully automated deployment pipeline.
 
----
+🛠 Production Engineering Challenges Solved
+🔹 MongoDB OOM Crash
 
-## 🌩 Future Improvements
+Fixed WiredTiger cache size for micro instance:
 
-- Deploy to AWS EC2
-- Add monitoring & metrics
-- Add CI/CD pipeline
-- Add model retraining workflow
-- Add authentication layer
+command: ["mongod", "--wiredTigerCacheSizeGB", "0.25"]
+🔹 Large Dataset Ingestion
 
----
+Implemented chunk-based batch insertion to safely seed 400K+ records.
 
-## 👨‍💻 Author
+🔹 Docker Networking Issue
 
-Abhik Das  
-Data Science | Machine Learning | MLOps  
+Replaced localhost with Docker service name for container communication.
 
----
+🔹 Version Mismatch
+
+Pinned scikit-learn version to ensure consistent model deserialization.
+
+🔹 Health Monitoring
+
+Implemented /health endpoint for production validation.
+
+🔐 Reproducibility
+
+All dependencies pinned in requirements.txt
+
+Docker ensures consistent runtime
+
+Environment-independent deployment
+
+🚀 Future Improvements
+
+HTTPS with Nginx reverse proxy
+
+Rate limiting
+
+Monitoring & metrics dashboard
+
+Model versioning system
+
+CloudWatch integration
+
+Automated retraining pipeline
+
+👨‍💻 Author
+
+Abhik Das
+Data Science | Machine Learning | MLOps
